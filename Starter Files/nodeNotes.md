@@ -7,3 +7,5 @@
 ## Adding or updating a store. Use /add to add a store and interpelation to update a store. 
 - `/add/${store._id || ''}` 
 - If there is no store id return as an empty string add a store. If there is already a store id keep the store id and edit the store instead. This uses the same template. 
+
+- use POST when a form is submitted. This will keep the information from being added to the url

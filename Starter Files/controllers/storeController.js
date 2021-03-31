@@ -7,12 +7,11 @@ exports.homePage = (req, res) => {
 
 exports.addStore = (req, res) => {
     res.render('editStore', { title: 'Add Store' }); // template can be used when creating a new store or editing an existing store. 
-}
+};
 
 // the error that wraps around this function is in errorHandlers.js line 9
 exports.createStore = async (req, res) => {
-    const store = new Store(req.body); // gets reflected in connection to mongoose
-    await store.save();
+    const store = await (new Store(req.body)).save(); // gets reflected in connection to mongoose
     req.flash('success', `Successfully Created ${store.name}. Care to leave a review?`); // flashes can include success, error, warning, info types
     res.redirect(`/store/${store.slug}`);  
 };
@@ -20,7 +19,6 @@ exports.createStore = async (req, res) => {
 exports.getStores = async (req, res) => {
     // 1. Query the database for a list of all stores
     const stores = await Store.find();
-    console.log(stores);
     res.render('stores', { title: 'Stores', stores }); // pass the variable stores to put the arrays in our template. 
 };
 
@@ -36,9 +34,9 @@ exports.updateStore = async (req, res) => {
     // find and update the store
     const store = Store.findOneAndUpdate({ _id: req.params.id }, req.body, { // Store.findOneAndUpdate(q, data, options) the three parameters
         new: true, // return the new store instead of the old one
-        runValidators: true, 
+        runValidators: true 
     }).exec(); 
-    req.flash('success', `Successfully updated <strong>${store.name}</strong>. <a href="/stores/${store.slug}"></a>`)
-    res.redirect(`/stores/${(await store)._id}/edit`);
+    req.flash('success', `Successfully updated <strong>${store.name}</strong>. <a href="/stores/${store.slug}">View Store</a>`);
+    res.redirect(`/stores/${(store)._id}/edit`);
     // redirect them to the store and tell them it worked
-}
+};
