@@ -1,0 +1,3 @@
+M Model - code that we write in data stored that access database. queries getting data
+V View - Template (pug). Views data
+C controller takes the data from model and send it to the view(template). 
