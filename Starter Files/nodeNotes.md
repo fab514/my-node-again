@@ -9,3 +9,6 @@
 - If there is no store id return as an empty string add a store. If there is already a store id keep the store id and edit the store instead. This uses the same template. 
 
 - use POST when a form is submitted. This will keep the information from being added to the url
+
+- when you want to generate an attribute you must use the es6 `${}`
+- if you want to put a variable inside of text content of node use #{}
