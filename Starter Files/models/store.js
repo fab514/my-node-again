@@ -31,8 +31,8 @@ const storeSchema = new mongoose.Schema({
             type: String, 
             required: 'You must supply an address!'
         }
-    }
-    
+    }, 
+    photo: String
 });
 storeSchema.pre('save', function(next) { // save will not happen until work is done within this function
     if (!this.isModified('name')) {
