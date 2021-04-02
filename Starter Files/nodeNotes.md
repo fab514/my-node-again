@@ -12,3 +12,8 @@
 
 - when you want to generate an attribute you must use the es6 `${}`
 - if you want to put a variable inside of text content of node use #{}
+
+## aggregation
+- aggregate will return a set of array with data we are looking for
+- https://docs.mongodb.com/manual/reference/operator/aggregation/ 
+- The link shows different aggregation pipeline operators
