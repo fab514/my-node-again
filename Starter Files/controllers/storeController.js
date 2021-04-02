@@ -56,8 +56,6 @@ exports.getStores = async (req, res) => {
 };
 
 exports.editStore = async (req, res) => {
-    // set the location data to be a point
-    req.body.location.type = 'Point';
     // 1. find the store given the id 
     const store = await Store.findOne({ _id: req.params.id });
     // 2. TODO confirm they are the owner of the store
@@ -67,7 +65,7 @@ exports.editStore = async (req, res) => {
 
 exports.updateStore = async (req, res) => {
     // set the location data to be a point
-    req.body.location.type = "Point";
+    req.body.location.type = 'Point';
     // find and update the store
     const store = Store.findOneAndUpdate({ _id: req.params.id }, req.body, { // Store.findOneAndUpdate(q, data, options) the three parameters
         new: true, // return the new store instead of the old one
@@ -76,4 +74,10 @@ exports.updateStore = async (req, res) => {
     req.flash('success', `Successfully updated <strong>${store.name}</strong>. <a href="/stores/${store.slug}">View Store</a>`);
     res.redirect(`/stores/${(store)._id}/edit`);
     // redirect them to the store and tell them it worked
+};
+
+exports.getStoreBySlug = async (req, res, next) => {
+    const store = await Store.findOne({ slug: req.params.slug });
+    if(!store) return next();
+    res.render('store', { store, title: store.name });
 };
