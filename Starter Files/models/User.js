@@ -4,7 +4,7 @@ mongoose.Promise = global.Promise;
 const md5 = require('md5');
 const validator = require('validator');
 const mongodbErrorHandler = require('mongoose-mongodb-errors');
-const passportLocalMongoose = require('password-local-mongoose'); // adds additional fields to schema and any additional mehods for using passwords
+const passportLocalMongoose = require('passport-local-mongoose'); // adds additional fields to schema and any additional mehods for using passwords
 
 const userSchema = new Schema({
     email: {
