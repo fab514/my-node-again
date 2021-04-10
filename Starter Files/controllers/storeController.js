@@ -44,6 +44,7 @@ exports.resize = async (req, res, next) => {
 
 // the error that wraps around this function is in errorHandlers.js line 9
 exports.createStore = async (req, res) => {
+    req.body.author = req.user._id;
     const store = await (new Store(req.body)).save(); // gets reflected in connection to mongoose
     req.flash('success', `Successfully Created ${store.name}. Care to leave a review?`); // flashes can include success, error, warning, info types
     res.redirect(`/store/${store.slug}`);  
