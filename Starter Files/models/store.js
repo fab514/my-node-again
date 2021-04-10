@@ -32,7 +32,13 @@ const storeSchema = new mongoose.Schema({
             required: 'You must supply an address!'
         }
     }, 
-    photo: String
+    photo: String,
+    author: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        required: 'You must Supply an Author'
+
+    }
 });
 storeSchema.pre('save', async function(next) { // save will not happen until work is done within this function
     if (!this.isModified('name')) {
