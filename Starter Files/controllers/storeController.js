@@ -44,7 +44,7 @@ exports.resize = async (req, res, next) => {
 
 // the error that wraps around this function is in errorHandlers.js line 9
 exports.createStore = async (req, res) => {
-    req.body.author = req.user._id;
+    req.body.author = req.user._id; // takes the id of the currently logged on user and created store to the author
     const store = await (new Store(req.body)).save(); // gets reflected in connection to mongoose
     req.flash('success', `Successfully Created ${store.name}. Care to leave a review?`); // flashes can include success, error, warning, info types
     res.redirect(`/store/${store.slug}`);  
@@ -56,10 +56,16 @@ exports.getStores = async (req, res) => {
     res.render('stores', { title: 'Stores', stores }); // pass the variable stores to put the arrays in our template. 
 };
 
+const confirmOwner = (store, user) => {
+    if (!store.author.equals(user._id)) {
+        throw Error('You must own a store in order to edit it!')
+    }
+}
 exports.editStore = async (req, res) => {
     // 1. find the store given the id 
     const store = await Store.findOne({ _id: req.params.id });
     // 2. TODO confirm they are the owner of the store
+    confirmOwner(store, req.user);
     // 3. render out the edit form so the user can update there store
     res.render('editStore', { title: `Edit ${store.name}`, store });
 };
@@ -93,3 +99,9 @@ exports.getStoresByTag = async (req, res) => {
     // Promise.all will wait until all of the promises are ready and complete at the same time
     res.render('tag', { tags, title: 'Tags', tag, stores });
 }
+
+//- Future considirations: you can have different levels of Users
+//-  10 Admin This will be put in storeCard.pug
+//-  20 Editor 
+//- From line 60 in storeController
+//- if (!store.author.equals(user._id) || user.level < 10)
