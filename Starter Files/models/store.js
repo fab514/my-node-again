@@ -37,7 +37,7 @@ const storeSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'User',
         required: 'You must Supply an Author'
-
+        // Give a relationship between the user and the store in MongoDB
     }
 });
 storeSchema.pre('save', async function(next) { // save will not happen until work is done within this function
