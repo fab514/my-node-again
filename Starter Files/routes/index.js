@@ -34,9 +34,9 @@ router.get('/register', userController.registerForm);
 // 2. register the user
 // 3. log them in
 router.post('/register', 
-userController.validateRegister,
-userController.register,
-authController.login
+    userController.validateRegister,
+    userController.register,
+    authController.login
 );
 
 router.get('/logout', authController.logout);
@@ -49,5 +49,13 @@ router.post('/account/reset/:token',
     authController.confirmedPasswords, 
     catchErrors(authController.update)
 );
+
+router.get('/top', catchErrors(storeController.getTopStores));
+
+/*
+API
+*/
+
+router.get('/api/search', catchErrors(storeController.searchStores))
 
 module.exports = router;
