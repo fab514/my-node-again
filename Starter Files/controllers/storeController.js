@@ -123,6 +123,28 @@ exports.searchStores = async (req, res) => {
   res.json(stores);
 };
 
+// we're looking for array of longitude and latitude
+exports.mapStores = async (req, res) => {
+  const coordinates = [req.query.lng, req.query.lat].map(parseFloat); // parse float will turn the string into a number
+  const q = {
+    location: {
+      $near: {
+        $geometry: {
+          type: 'Point',
+          coordinates
+        },
+        $maxDistance: 10000 // 6.2 miles
+      }
+    }
+  };
+  const stores = await Store.find(q).select('slug name description location').limit(10); // you can select the items you want shown
+  res.json(stores);
+};
+
+exports.mapPage = (req, res) => {
+  res.render('map', { title: 'Map' });
+}
+
 
 // exports.getTopStores = async (req, res) => {
 //     const stores = await Store.getTopStores();
