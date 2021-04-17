@@ -26,10 +26,10 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
         marker.place = place;
         return marker;
       });
-
+      // addListener is google version of addEventListener
       // when someone clicks on a marker, show the details of that place
       markers.forEach(marker => marker.addListener('click', function() {
-        console.log(this.place);
+        console.log(this.place); // the html for the marker popup
         const html = `
           <div class="popup">
             <a href="/store/${this.place.slug}">
@@ -39,7 +39,7 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
           </div>
         `;
         infoWindow.setContent(html);
-        infoWindow.open(map, this);
+        infoWindow.open(map, this); // this attaches to this map
       }));
 
       // then zoom the map to fit all the markers perfectly
@@ -59,7 +59,7 @@ function makeMap(mapDiv) {
   const autocomplete = new google.maps.places.Autocomplete(input);
   autocomplete.addListener('place_changed', () => {
     const place = autocomplete.getPlace();
-    loadPlaces(map, place.geometry.location.lat(), place.geometry.location.lng());
+    loadPlaces(map, place.geometry.location.lat(), place.geometry.location.lng()); // locate the search from any part of the map
   });
 }
 
