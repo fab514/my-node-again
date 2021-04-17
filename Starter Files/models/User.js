@@ -22,7 +22,7 @@ const userSchema = new Schema({
   },
   resetPasswordToken: String,
   resetPasswordExpires: Date,
-  hearts: [
+  hearts: [ // heart is an array of ids that are related to a store
     { type: mongoose.Schema.ObjectId, ref: 'Store' }
   ]
 });
