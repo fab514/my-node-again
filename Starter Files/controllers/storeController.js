@@ -137,7 +137,7 @@ exports.mapStores = async (req, res) => {
       }
     }
   };
-  const stores = await Store.find(q).select('slug name description location').limit(10); // you can select the items you want shown
+  const stores = await Store.find(q).select('slug name description location photo').limit(10); // you can select the items you want shown
   res.json(stores);
 };
 
@@ -145,6 +145,17 @@ exports.mapPage = (req, res) => {
   res.render('map', { title: 'Map' });
 }
 
+// Video 35
+exports.heartStore = async (req, res) => {
+  const hearts = req.user.hearts.map(obj => obj.toString());
+  const operator = hearts.includes(req.params.id) ? '$pull' : '$addToSet';
+  const user = await User
+  .findByIdAndUpdate(req.user._id,
+    { [operator]: { hearts: req.params.id } },
+    { new: true }
+  );
+  res.json(user);
+};
 
 // exports.getTopStores = async (req, res) => {
 //     const stores = await Store.getTopStores();
