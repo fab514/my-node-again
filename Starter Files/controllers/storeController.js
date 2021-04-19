@@ -157,6 +157,14 @@ exports.heartStore = async (req, res) => {
   res.json(user);
 };
 
+// Video 36- Any hearted stores will show on the hearted page
+exports.getHearts = async (req, res) => {
+  const stores = await Store.find({
+    _id: { $in: req.user.hearts } // looks for any id that is in an array for the hearts
+  });
+    res.render('stores', { title: 'Hearted Stores', stores });
+}
+
 // exports.getTopStores = async (req, res) => {
 //     const stores = await Store.getTopStores();
 //     res.json(stores);
