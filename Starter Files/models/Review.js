@@ -1,4 +1,3 @@
-const { date } = require('faker');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
@@ -27,5 +26,14 @@ const reviewSchema = new mongoose.Schema({
        max: 5, 
     },
 })
+
+// automatically populate the author field in reviews
+function autopopulate(next) {
+    this.populate('author');
+    next();
+}
+
+reviewSchema.pre('find', autopopulate);
+reviewSchema.pre('findOne', autopopulate);
 
 module.exports = mongoose.model('Review', reviewSchema);   
