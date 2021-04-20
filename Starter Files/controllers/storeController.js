@@ -51,9 +51,30 @@ exports.createStore = async (req, res) => {
 };
 
 exports.getStores = async (req, res) => {
+  const page = req.params.page || 1;
+  const limit = 4;
+  const skip = (page * limit) - limit;
+
   // 1. Query the database for a list of all stores
-  const stores = await Store.find();
-  res.render('stores', { title: 'Stores', stores }); // pass the variable stores to put the arrays in our template.
+  const storesPromise = Store
+    .find()
+    .skip(skip)
+    .limit(limit)
+    .sort({ created: 'desc' }); // sorts by the authors store first
+
+  const countPromise = Store.count();
+
+  const [stores, count] = await Promise.all([storesPromise, countPromise]); // await for both of the variables to come back
+
+  const pages = Math.ceil(count / limit);
+  if (!stores.length && skip) {
+    req.flash('info', `Hey! You asked for page ${page}. But that does not exist. 
+      So I put you on page ${pages}`);
+    res.redirect(`/stores/page/${pages}`);
+    return;
+  }
+
+  res.render('stores', { title: 'Stores', stores, page, pages, count }); // pass the variable stores to put the arrays in our template.
 };
 
 const confirmOwner = (store, user) => {
@@ -166,13 +187,10 @@ exports.getHearts = async (req, res) => {
     res.render('stores', { title: 'Hearted Stores', stores });
 }
 
-// exports.getTopStores = async (req, res) => {
-//     const stores = await Store.getTopStores();
-//     res.json(stores);
-//     // res.render('topStores', { stores, title:'Top Stores!'}
-//     // render out a topStores.pug file
-//     // );
-// }
+exports.getTopStores = async (req, res) => {
+    const stores = await Store.getTopStores();
+    res.render('topStores', { stores, title:'⭐ Top Stores!'});
+}
 
 
 //- Future considirations: you can have different levels of Users
