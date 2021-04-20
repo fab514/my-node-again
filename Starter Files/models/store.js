@@ -77,21 +77,29 @@ storeSchema.index({
     ]);
   }
 
-// storeSchema.statics.getTopStores = function() {
-//     return this.aggregate([
-//         // aggregate is a query function, it is not mongoose specific so we can't use the virtual reviews. Goes right to MongoDB
-//         { $lookup: 
-//             {from: 'reviews', localField: '_id', 
-//             foreignField: 'store', as: 'reviews'}},
-//         // Lookup Stores and populate their reviews
-//         { $match: { 'reviews.1': { $exists: true }}} // reviews.1 access the second item in the reviews
-//         // Filter for only items that have 2 or more reviews
-//         // Add the average reviews field
-//         // Sort it by our new field, highest reviews first
-//         // Limit to at most 10
-
-//     ])
-// }
+storeSchema.statics.getTopStores = function() {
+    return this.aggregate([
+        // aggregate is a query function, it is not mongoose specific so we can't use the virtual reviews. Goes right to MongoDB
+        // Lookup Stores and populate their reviews
+        { $lookup: 
+            { from: 'reviews', localField: '_id', 
+            foreignField: 'store', as: 'reviews' }},
+        // Filter for only items that have 2 or more reviews
+        { $match: { 'reviews.1': { $exists: true }}}, // reviews.1 access the second item in the reviews
+        // Add the average reviews field
+        { $project: { // root shows the original field
+          photo: '$$ROOT.photo',
+          name: '$$ROOT.name',
+          reviews: '$$ROOT.reviews',
+          slug: '$$ROOT.slug',
+          averageRating: { $avg: '$reviews.rating' }
+        }},
+        // Sort it by our new field, highest reviews first
+        { $sort: { averageRating: -1 }},
+        // Limit to at most 10
+        { $limit: 10 }
+    ])
+}
 
 // find review where the stores _id property === reviews store property
 // virtual fields does not save any relationship between the fields.  It will not be shown in dump unless specifically called
@@ -101,6 +109,13 @@ storeSchema.virtual('reviews', {
     foreignField: 'store', // which field on the review?
 });
 
+function autopopulate(next) {
+  this.populate('reviews');
+  next();
+}
+
+storeSchema.pre('find', autopopulate);
+storeSchema.pre('findOne', autopopulate);
 
 module.exports = mongoose.model('Store', storeSchema); // imports object with many properties instead of a functon 
 
