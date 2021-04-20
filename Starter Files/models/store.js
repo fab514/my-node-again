@@ -37,8 +37,12 @@ const storeSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'User',
         required: 'You must Supply an Author'
-        // Give a relationship between the user and the store in MongoDB
     }
+        // Give a relationship between the user and the store in MongoDB
+}, {
+    // will show the virtual fields when called in .dump
+        toJSON: { virtuals: true }, 
+        toObject: { virtual: true },
 });
 
 // Define our indexes, allow user to search by keyword in the name and despription
@@ -73,23 +77,24 @@ storeSchema.index({
     ]);
   }
 
-storeSchema.statics.getTopStores = function() {
-    return this.aggregate([
-        // aggregate is a query function, it is not mongoose specific so we can't use the virtual reviews. Goes right to MongoDB
-        { $lookup: 
-            {from: 'reviews', localField: '_id', 
-            foreignField: 'store', as: 'reviews'}},
-        // Lookup Stores and populate their reviews
-        { $match: { 'reviews.1': { $exists: true }}} // reviews.1 access the second item in the reviews
-        // Filter for only items that have 2 or more reviews
-        // Add the average reviews field
-        // Sort it by our new field, highest reviews first
-        // Limit to at most 10
+// storeSchema.statics.getTopStores = function() {
+//     return this.aggregate([
+//         // aggregate is a query function, it is not mongoose specific so we can't use the virtual reviews. Goes right to MongoDB
+//         { $lookup: 
+//             {from: 'reviews', localField: '_id', 
+//             foreignField: 'store', as: 'reviews'}},
+//         // Lookup Stores and populate their reviews
+//         { $match: { 'reviews.1': { $exists: true }}} // reviews.1 access the second item in the reviews
+//         // Filter for only items that have 2 or more reviews
+//         // Add the average reviews field
+//         // Sort it by our new field, highest reviews first
+//         // Limit to at most 10
 
-    ])
-}
+//     ])
+// }
 
 // find review where the stores _id property === reviews store property
+// virtual fields does not save any relationship between the fields.  It will not be shown in dump unless specifically called
 storeSchema.virtual('reviews', {
     ref: 'Review', // what model to link?
     localField: '_id', // which field on the store?
@@ -97,5 +102,5 @@ storeSchema.virtual('reviews', {
 });
 
 
-module.exports = mongoose.model('Store', storeSchema);                                            // imports object with many properties instead of a functon 
+module.exports = mongoose.model('Store', storeSchema); // imports object with many properties instead of a functon 
 
